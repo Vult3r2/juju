@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Words Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, black, red);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #options button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #options button:hover {
+            background-color: #0056b3;
+        }
+
+        #nextButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #nextButton:hover {
+            background-color: #218838;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: red; /* Cor alterada */
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+
+        #quizResult {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+
+        #quizResult ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        #quizResult ul li {
+            margin-bottom: 5px;
+            color: red;
+        }
+
+        .footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .names {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .date {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .question {
+            color: #333; /* Cor das perguntas alterada */
+        }
+    </style>
+</head>
+<body>
+    <div class="names">
+        <p>Gabriel Franz</p>
+        <p>Maria Luiza</p>
+        <p>Victor Hugo</p>
+        <p>Nathalia</p>
+        <p>Amanda</p>
+        <p>Gustavo</p>
+    </div>
+    <div class="date">
+        <p>CEPMG-PXT 14/04/2024</p>
+    </div>
+    <div class="container">
+        <h1>Question Words Quiz</h1>
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button id="nextButton">Próxima</button>
+        <div id="feedback"></div> <!-- Movido para abaixo do botão -->
+        <div id="quizResult"></div>
+    </div>
+    <div class="footer">
+        <p>CEPMG-PXT 14/04/2024</p>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Calm",
+                options: ["Quiet", "Loud", "Fast", "Soft"],
+                answer: "Quiet"
+            },
+            {
+                question: "Rain",
+                options: ["Sun", "Shine", "Cloud", "Thunder"],
+                answer: "Thunder"
+            },
+            {
+                question: "Love",
+                options: ["Hate", "Anger", "Sadness", "Joy"],
+                answer: "Joy"
+            },
+            {
+                question: "_____ are you?",
+                options: ["Who", "What", "Where", "Why"],
+                answer: "Who"
+            },
+            {
+                question: "_____ is your last name?",
+                options: ["What", "Where", "Who", "Which"],
+                answer: "What"
+            },
+            {
+                question: "_____ is your favorite color?",
+                options: ["What", "Who", "Why", "How"],
+                answer: "What"
+            },
+            {
+                question: "_____ is your birthday?",
+                options: ["When", "Where", "Who", "What"],
+                answer: "When"
+            }
+        ];
+
+        let correctAnswers = 0;
+        const userAnswers = [];
+        let currentQuestion = 0;
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const nextButton = document.getElementById('nextButton');
+        const feedbackElement = document.getElementById('feedback');
+        const quizResultElement = document.getElementById('quizResult');
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionElement.textContent = q.question;
+            optionsElement.innerHTML = '';
+            q.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.addEventListener('click', () => {
+                    checkAnswer(option === q.answer, option, q.answer);
+                });
+                optionsElement.appendChild(button);
+            });
+            feedbackElement.textContent = '';
+        }
+
+        function checkAnswer(isCorrect, userAnswer, correctAnswer) {
+            if (isCorrect) {
+                feedbackElement.textContent = 'Resposta Correta!';
+                feedbackElement.classList.add('correct');
+                correctAnswers++;
+            } else {
+                feedbackElement.textContent = `Você errou a questão "${questions[currentQuestion].question}" você selecionou "${userAnswer}", a resposta era "${correctAnswer}".`;
+                feedbackElement.classList.add('incorrect');
+                userAnswers.push({ question: questions[currentQuestion].question, userAnswer, correctAnswer });
+            }
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            quizResultElement.innerHTML = `<p>Você acertou ${correctAnswers} de ${questions.length} questões:</p>`;
+            const resultList = document.createElement('ul');
+            userAnswers.forEach(answer => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `Você errou a questão "${answer.question}" você selecionou "${answer.userAnswer}", a resposta era "${answer.correctAnswer}".`;
+                resultList.appendChild(listItem);
+            });
+            quizResultElement.appendChild(resultList);
+        }
+
+        nextButton.addEventListener('click', loadQuestion);
+
+        loadQuestion();
+    </script>
+</body>
+</html>
